@@ -3,6 +3,7 @@
 __all__ = [
     'P8Formatter',
     'InvalidP8HeaderError',
+    'InvalidP8VersionError',
     'InvalidP8SectionError',
     'P8IncludeNotFound',
     'P8IncludeOutsideOfAllowedDirectory',
@@ -39,8 +40,22 @@ TAB_LINE_RE = re.compile(br'-->8')
 class InvalidP8HeaderError(util.InvalidP8DataError):
     """Exception for invalid .p8 file header."""
 
+    def __init__(self, bad_header, expected_header):
+        self.bad_header = bad_header
+        self.expected_header = expected_header
+
     def __str__(self):
-        return 'Invalid .p8: missing or corrupt header'
+        return ('Invalid .p8: missing or corrupt header. Found "%s" Expected "%s"' % self.bad_header, self.expected_header)
+
+
+class InvalidP8VersionError(util.InvalidP8DataError):
+    """Exception for invalid .p8 version header."""
+
+    def __init__(self, bad_version_line):
+        self.bad_version_line = bad_version_line 
+
+    def __str__(self):
+        return ('Invalid .p8: invalid version header. found "%s"' % self.bad_version_line)
 
 
 class InvalidP8SectionError(util.InvalidP8DataError):
@@ -69,11 +84,11 @@ class InvalidP8Include(util.InvalidP8DataError):
 def _get_raw_data_from_p8_file(instr, filename=None):
     header_title_str = instr.readline()
     if header_title_str != HEADER_TITLE_STR:
-        raise InvalidP8HeaderError()
+        raise InvalidP8HeaderError(header_title_str, HEADER_TITLE_STR)
     header_version_str = instr.readline()
     version_m = HEADER_VERSION_RE.match(header_version_str)
     if version_m is None:
-        raise InvalidP8HeaderError()
+        raise InvalidP8VersionError(header_version_str)
     version = int(version_m.group(1))
 
     # (section is a text str.)
