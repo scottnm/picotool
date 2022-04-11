@@ -1,0 +1,2 @@
+# test p8 cart files should not have their line endings changed on checkout
+*.p8 text=false
