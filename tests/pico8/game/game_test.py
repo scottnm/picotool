@@ -361,7 +361,13 @@ class TestGameToP8(unittest.TestCase):
             expected_game_p8 = fh.read()
         outstr = io.BytesIO()
         p8.P8Formatter.to_file(orig_game, outstr)
-        self.assertEqual(expected_game_p8, outstr.getvalue())
+
+        # It's not (yet) important for this tool to retain CRLF endings when building from a source p8 cart
+        # which uses CRLF endings. It's ok for the resulting generated cart to use LF endings.
+        expected_game_p8 = expected_game_p8.replace(b"\r", b"")
+        outstr = outstr.getvalue().replace(b"\r", b"")
+
+        self.assertEqual(expected_game_p8, outstr)
 
     def testToP8FileFromP8PreservesLabel(self):
         test_cart_path = os.path.join(
