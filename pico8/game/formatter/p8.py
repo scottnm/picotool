@@ -24,7 +24,7 @@ from ...sfx.sfx import Sfx
 from ...music.music import Music
 
 HEADER_TITLE_STR = b'pico-8 cartridge // http://www.pico-8.com\n'
-HEADER_VERSION_RE = re.compile(br'version (\d+)\n')
+HEADER_VERSION_RE = re.compile(br'^version (\d+)$')
 SECTION_DELIM_RE = re.compile(br'__(\w+)__\n')
 INCLUDE_LINE_RE = re.compile(
     br'\s*#include\s+(\S+)(\.p8\.png|\.p8|\.lua)(\:\d+)?')
@@ -68,7 +68,8 @@ class InvalidP8Include(util.InvalidP8DataError):
 
 def _get_raw_data_from_p8_file(instr, filename=None):
     header_title_str = instr.readline()
-    if header_title_str != HEADER_TITLE_STR:
+    # use rstrip to normalize line endings
+    if header_title_str.rstrip() != HEADER_TITLE_STR.rstrip():
         raise InvalidP8HeaderError()
     header_version_str = instr.readline()
     version_m = HEADER_VERSION_RE.match(header_version_str)
