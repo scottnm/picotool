@@ -353,6 +353,16 @@ class TestGameToP8(unittest.TestCase):
         p8.P8Formatter.to_file(orig_game, outstr)
         self.assertEqual(expected_game_p8, outstr.getvalue())
 
+    def testToP8FileFromP8WithCrlf(self):
+        test_cart_path = os.path.join(self.testdata_path, 'test_cart_crlf.p8')
+        with open(test_cart_path, 'rb') as fh:
+            orig_game = p8.P8Formatter.from_file(fh)
+        with open(test_cart_path, 'rb') as fh:
+            expected_game_p8 = fh.read()
+        outstr = io.BytesIO()
+        p8.P8Formatter.to_file(orig_game, outstr)
+        self.assertEqual(expected_game_p8, outstr.getvalue())
+
     def testToP8FileFromP8PreservesLabel(self):
         test_cart_path = os.path.join(
             self.testdata_path, 'test_cart_with_label.p8')
