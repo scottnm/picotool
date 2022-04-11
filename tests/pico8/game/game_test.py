@@ -531,7 +531,7 @@ class TestP8Include(unittest.TestCase):
 
     def testGetRootIncludePathUnrecognizedRoot(self):
         cartpath = '/tmp/subdir/somecart.p8'
-        expected = '/tmp/subdir'
+        expected = os.path.abspath('/tmp/subdir')
         self.assertEqual(
             expected,
             p8.get_root_include_path(cartpath))
