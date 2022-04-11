@@ -197,7 +197,11 @@ class TestP8Game(unittest.TestCase):
 
     def testInvalidP8HeaderErrorMsg(self):
         # coverage
-        str(p8.InvalidP8HeaderError())
+        str(p8.InvalidP8HeaderError('bad', 'expected'))
+
+    def testInvalidP8VersionErrorMsg(self):
+        # coverage
+        str(p8.InvalidP8VersionError('bad version'))
 
     def testInvalidP8SectionErrorMsg(self):
         # coverage
@@ -214,7 +218,7 @@ class TestP8Game(unittest.TestCase):
 
     def testInvalidP8HeaderLineTwo(self):
         self.assertRaises(
-            p8.InvalidP8HeaderError,
+            p8.InvalidP8VersionError,
             p8.P8Formatter.from_file,
             io.BytesIO(
                 INVALID_P8_HEADER_TWO +
